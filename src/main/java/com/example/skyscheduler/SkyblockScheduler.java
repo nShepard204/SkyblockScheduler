@@ -1,28 +1,21 @@
-package com.example.demo;
+package com.example.skyscheduler;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.core.env.Environment;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.time.Duration;
 import java.util.logging.Logger;
 
 @SpringBootApplication
 @RestController
-public class DemoApplication {
+public class SkyblockScheduler {
 	@Value("${mailgun.api.key}")
 	private String mailgunApiKey;
 	@Value("${hypixel.api.key}")
@@ -34,7 +27,7 @@ public class DemoApplication {
 
 	Logger logger = Logger.getGlobal();
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(SkyblockScheduler.class, args);
 	}
 	@GetMapping("/hello")
 	public String hello(@RequestParam(value = "name", defaultValue = "World") String name){
