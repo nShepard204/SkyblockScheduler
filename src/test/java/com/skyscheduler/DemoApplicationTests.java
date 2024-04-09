@@ -1,4 +1,4 @@
-package com.example.skyscheduler;
+package com.skyscheduler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

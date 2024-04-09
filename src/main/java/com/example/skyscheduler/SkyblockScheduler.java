@@ -1,16 +1,21 @@
 package com.example.skyscheduler;
 
+import com.example.skyscheduler.Controllers.HypixelController;
+import com.example.skyscheduler.Objects.SkyblockTime;
+import com.example.skyscheduler.Utilities.TimeUtils;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.Instant;
 import java.util.logging.Logger;
 
 @SpringBootApplication
@@ -25,20 +30,25 @@ public class SkyblockScheduler {
 	@Value("${hypixel.priv.uuid}")
 	private String shepUuid;
 
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+	@Autowired
+	HypixelController hypixelController;
+	@Autowired
+	TimeUtils sbTime;
+
 	Logger logger = Logger.getGlobal();
 	public static void main(String[] args) {
 		SpringApplication.run(SkyblockScheduler.class, args);
 	}
-	@GetMapping("/hello")
-	public String hello(@RequestParam(value = "name", defaultValue = "World") String name){
-		return String.format("Hello %s!", name);
-	}
 
+	@GetMapping("/")
+	public String landingPage(){
+		SkyblockTime time = new SkyblockTime();
 
-	@GetMapping("/emailTest")
-	public String emailTest(){
-		JsonNode jsonData = sendEmail();
-		return jsonData.toPrettyString();
+		logger.info(time.fromInstant(Instant.now()).toString());
+		//logger.info(hypixelTest());
+		return "Hello World!";
 	}
 
 	public JsonNode sendEmail() throws UnirestException {
@@ -52,13 +62,11 @@ public class SkyblockScheduler {
 		return request.getBody();
 	}
 
-	@GetMapping("/hypixelTest")
 	public String hypixelTest(){
-//		HttpResponse<JsonNode> playerData = Unirest.get("https://api.hypixel.net/v2/player")
-//				.header("API-Key", this.hypixelApiKey)
-//				.queryString("uuid", this.shepUuid)
-//				.asJson();
-//		return playerData.getBody().toPrettyString();
-		return "";
+		HttpResponse<JsonNode> playerData = Unirest.get("https://api.hypixel.net/v2/resources/games")
+				.header("API-Key", this.hypixelApiKey)
+				.queryString("uuid", this.shepUuid)
+				.asJson();
+		return playerData.getBody().toPrettyString();
 	}
 }
