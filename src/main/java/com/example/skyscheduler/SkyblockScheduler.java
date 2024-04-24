@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 
 @SpringBootApplication
 @RestController
+@EnableScheduling
 public class SkyblockScheduler {
 	@Value("${mailgun.api.key}")
 	private String mailgunApiKey;
@@ -44,13 +47,19 @@ public class SkyblockScheduler {
 
 	@GetMapping("/")
 	public String landingPage(){
-		SkyblockTime time = new SkyblockTime();
+		SkyblockTime time = new SkyblockTime(Instant.now());
+		SkyblockTime startSpookyTime = new SkyblockTime(time.getYear(), 8, 29, 0,0,0);
 
-		logger.info(time.fromInstant(Instant.now()).toString());
+
+		logger.info(Instant.now().toString());
+		logger.info(startSpookyTime.toInstant().toString());
+
+		//logger.info(time.toString());
 		//logger.info(hypixelTest());
 		return "Hello World!";
 	}
 
+	@Scheduled(cron = "0 57 13 * * *")
 	public JsonNode sendEmail() throws UnirestException {
 		HttpResponse<JsonNode> request = Unirest.post(String.format("https://api.mailgun.net/v3/%s/messages", this.mailgunDevDomain))
 				.basicAuth("api", this.mailgunApiKey)
