@@ -19,6 +19,14 @@ public class SkyblockTime {
     private int minute;
     private int second;
 
+    public SkyblockTime(){
+        this.year = 1;
+        this.month = 1;
+        this.day = 1;
+        this.hour = 0;
+        this.minute = 0;
+        this.second = 0;
+    }
     public SkyblockTime(int year, int month, int day, int hour, int minute, int second){
         this.year = year;
         this.month = month;
@@ -28,10 +36,10 @@ public class SkyblockTime {
         this.second = second;
     }
 
-    public SkyblockTime(){
-        this.year = 1;
-        this.month = 1;
-        this.day = 1;
+    public SkyblockTime(int year, int month, int day){
+        this.year = year;
+        this.month = month;
+        this.day = day;
         this.hour = 0;
         this.minute = 0;
         this.second = 0;

@@ -1,8 +1,8 @@
 package com.example.skyscheduler;
 
-import com.example.skyscheduler.Controllers.HypixelController;
+import com.example.skyscheduler.Controllers.SkyblockEventController;
+import com.example.skyscheduler.Controllers.MonthController;
 import com.example.skyscheduler.Objects.SkyblockTime;
-import com.example.skyscheduler.Utilities.TimeUtils;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.jdbc.core.JdbcTemplate;
+import com.example.skyscheduler.Entities.*;
 
 import java.time.Instant;
 import java.util.logging.Logger;
@@ -33,12 +33,11 @@ public class SkyblockScheduler {
 	@Value("${hypixel.priv.uuid}")
 	private String shepUuid;
 
+	// Controllers.
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	MonthController monthController;
 	@Autowired
-	HypixelController hypixelController;
-	@Autowired
-	TimeUtils sbTime;
+	SkyblockEventController skyBlockEventController;
 
 	Logger logger = Logger.getGlobal();
 	public static void main(String[] args) {
@@ -47,15 +46,11 @@ public class SkyblockScheduler {
 
 	@GetMapping("/")
 	public String landingPage(){
-		SkyblockTime time = new SkyblockTime(Instant.now());
-		SkyblockTime startSpookyTime = new SkyblockTime(time.getYear(), 8, 29, 0,0,0);
+		SkyblockTime realTime = new SkyblockTime(Instant.now());
+		Iterable<SkyblockEvent> events = skyBlockEventController.getAllEvents();
 
+		logger.info(skyBlockEventController.getNextEventWindow(9));
 
-		logger.info(Instant.now().toString());
-		logger.info(startSpookyTime.toInstant().toString());
-
-		//logger.info(time.toString());
-		//logger.info(hypixelTest());
 		return "Hello World!";
 	}
 
