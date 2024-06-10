@@ -1,18 +1,20 @@
 package com.example.skyscheduler.Entities;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class SkyblockEvent {
     @Id
     @GeneratedValue
     private Long id;
+    @Column
     private String eventName;
+    @Column
     private int startMonth;
+    @Column
     private int startDay;
+    @Column
     private int endMonth;
+    @Column
     private int endDay;
 
     protected SkyblockEvent(){}

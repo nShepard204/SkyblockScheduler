@@ -1,29 +1,31 @@
 package com.example.skyscheduler;
 
-import com.example.skyscheduler.Controllers.SkyblockEventController;
-import com.example.skyscheduler.Controllers.MonthController;
-import com.example.skyscheduler.Objects.SkyblockTime;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.skyscheduler.Entities.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.time.Instant;
-import java.util.logging.Logger;
+
 
 @SpringBootApplication
 @RestController
 @EnableScheduling
 public class SkyblockScheduler {
+	Logger logger = LoggerFactory.getLogger(SkyblockScheduler.class);
+
 	@Value("${mailgun.api.key}")
 	private String mailgunApiKey;
 	@Value("${hypixel.api.key}")
@@ -33,26 +35,23 @@ public class SkyblockScheduler {
 	@Value("${hypixel.priv.uuid}")
 	private String shepUuid;
 
-	// Controllers.
-	@Autowired
-	MonthController monthController;
-	@Autowired
-	SkyblockEventController skyBlockEventController;
 
-	Logger logger = Logger.getGlobal();
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(SkyblockScheduler.class, args);
 	}
 
-	@GetMapping("/")
-	public String landingPage(){
-		SkyblockTime realTime = new SkyblockTime(Instant.now());
-		Iterable<SkyblockEvent> events = skyBlockEventController.getAllEvents();
-
-		logger.info(skyBlockEventController.getNextEventWindow(9));
-
-		return "Hello World!";
+	@Bean
+	public WebMvcConfigurer corsConfigurer(){
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry){
+				registry.addMapping("/**").allowedMethods("GET", "PUT", "POST", "DELETE").allowedOrigins("http://localhost:3000");
+			}
+		};
 	}
+
 
 	@Scheduled(cron = "0 57 13 * * *")
 	public JsonNode sendEmail() throws UnirestException {
